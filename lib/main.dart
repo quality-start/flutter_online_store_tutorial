@@ -42,15 +42,24 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white54,
-        leading: Image.asset(
-          'images/cyber.png',
-          //todo:下記を指定しても画像の大きさは変わらなかったので後ほど調査
-          //width: 100,
-          //height: 100,
-        ),
-        leadingWidth: 150,
+        title: Image.asset('images/cyber.png'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {},
+          ),
+        ],
       ),
-      endDrawer: Drawer(
+      drawer: Drawer(
         child: ListView(
           children: const <Widget>[
             ListTile(
@@ -64,15 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ListTile(
               title: Text('Blog'),
-            ),
-            ListTile(
-              leading: Icon(Icons.favorite),
-            ),
-            ListTile(
-              leading: Icon(Icons.shopping_cart), // Icon aligned to the left
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
             ),
           ],
         ),
@@ -90,11 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
