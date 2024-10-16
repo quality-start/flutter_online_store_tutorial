@@ -9,13 +9,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -26,6 +22,19 @@ class MyHomePage extends StatefulWidget {
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class ProductsModel {
+  ProductsModel({
+    required this.title,
+    required this.memory,
+    required this.price,
+    required this.image,
+  });
+  final String title;
+  final String memory;
+  final double price;
+  final String image;
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -39,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final items = List.generate(90, (index) => '${index + 1}');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white54,
@@ -77,18 +87,20 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      body: SafeArea(
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            childAspectRatio: 9 / 16,
+          ),
+          itemCount: items.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              child: Center(child: Text('${index + 1}')),
+            );
+          },
         ),
       ),
     );
