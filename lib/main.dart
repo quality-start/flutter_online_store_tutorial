@@ -99,7 +99,7 @@ class ProductGrid extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.7,
+        childAspectRatio: 0.45,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
       ),
@@ -127,7 +127,6 @@ class ProductCard extends StatelessWidget {
               Image.asset(
                 product['image'] as String,
                 fit: BoxFit.cover,
-                height: 120, // Reduced height
                 width: double.infinity,
               ),
               const Padding(
