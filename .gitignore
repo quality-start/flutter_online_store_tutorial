@@ -28,3 +28,5 @@ doc/api/
 .DS_Store
 images/.DS_Store
 lib/.DS_Store
+.history
+flutter_sdk
