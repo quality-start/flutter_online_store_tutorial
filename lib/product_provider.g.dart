@@ -6,12 +6,11 @@ part of 'product_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$dummyProductHash() => r'a4b54ac32bc4e8e73be79ff014c8d21b084f83ed';
+String _$dummyProductHash() => r'0fe809e8d126ed5471a7c3dadfdfc2fcdafcb541';
 
 /// See also [dummyProduct].
 @ProviderFor(dummyProduct)
-final dummyProductProvider =
-    AutoDisposeFutureProvider<List<Map<String, dynamic>>>.internal(
+final dummyProductProvider = AutoDisposeFutureProvider<Map<String, dynamic>>.internal(
   dummyProduct,
   name: r'dummyProductProvider',
   debugGetCreateSourceHash:
@@ -20,16 +19,12 @@ final dummyProductProvider =
   allTransitiveDependencies: null,
 );
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef DummyProductRef
-    = AutoDisposeFutureProviderRef<List<Map<String, dynamic>>>;
 String _$asyncProductHash() => r'6a738e9c1e33ed992386dbaae077c52c49a2d1fc';
 
 /// See also [AsyncProduct].
 @ProviderFor(AsyncProduct)
-final asyncProductProvider = AutoDisposeAsyncNotifierProvider<AsyncProduct,
-    List<Map<String, dynamic>>>.internal(
+final asyncProductProvider =
+    AutoDisposeAsyncNotifierProvider<AsyncProduct, List<Map<String, dynamic>>>.internal(
   AsyncProduct.new,
   name: r'asyncProductProvider',
   debugGetCreateSourceHash:
