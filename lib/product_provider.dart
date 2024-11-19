@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter_online_store_tutorial/main.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -41,18 +40,59 @@ class AsyncProduct extends _$AsyncProduct {
   // product_provider.g.dartを見ると、AutoDisposeAsyncNotifierProviderというProviderが生成されているのがわかります。
   @override
   Future<List<Map<String, dynamic>>> build() async {
-    // buildメソッドは定義必須です。@overrideも必須。
-    // Providerの中身を初期化する時、Riverpodから呼び出されます。
     return fetchProducts();
   }
 
   // appendという関数を作って、fetchProductsを呼び出して、元のデータに追加してください
   Future<void> append() async {
-    final products = await fetchProducts();
     // Notifierを使った場合、`state`という変数しか再代入できないようになっています。
-    // stateに新しいデータを代入すると、ref.watchによってリビルドが自動的に行われます。
-    // しかし、state = [...state, ...products];のようなコードを書いても、コンパイル通りません。
-    // Riverpodのドキュメントを参考にしながら、stateを更新してください。
-    // stateは、AsyncValueクラスのデータです。Futureのように複数の状態を持っています。
+    // requireValueは、AsyncValueの中身を取得するための変数。初期化されていない場合などはエラー
+    final current = state.requireValue;
+    final next = await fetchProducts();
+    // currentとnextを結合すると、要素が全部連結された配列を返します。
+    // [1,2,3,4] + [1,2,3,4] = [1,2,3,4,1,2,3,4]
+    final result = current + next;
+    // stateには、AsyncValueという型が入っています。AsyncValueは、AsyncLoading, AsyncData, AsyncErrorの3つの状態を持ちます。
+    state = const AsyncLoading();
+    state = AsyncValue.data(result); // AsyncData(result)
   }
+}
+
+Future<List<Map<String, dynamic>>> fetchProducts() async {
+  return Future.delayed(const Duration(seconds: 2), () {
+    return [
+      {
+        'name': 'Apple iPhone 14 Pro',
+        'storage': '512GB',
+        'color': 'Gold',
+        'model': 'MQ2...',
+        'price': 1437,
+        'image': 'images/iphone14pro_gold.png',
+      },
+      {
+        'name': 'Apple iPhone 11',
+        'storage': '128GB',
+        'color': 'White',
+        'model': 'MQ...',
+        'price': 510,
+        'image': 'images/iphone11.png',
+      },
+      {
+        'name': 'Apple iPhone 11_white',
+        'storage': '128GB',
+        'color': 'White',
+        'model': '...',
+        'price': 550,
+        'image': 'images/iphone11_white.png',
+      },
+      {
+        'name': 'Apple iPhone 14 Pro',
+        'storage': '1TB',
+        'color': 'Gold',
+        'model': 'MQ2V3',
+        'price': 1499,
+        'image': 'images/iphone14pro.png',
+      },
+    ];
+  });
 }

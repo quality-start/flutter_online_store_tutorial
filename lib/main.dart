@@ -1,43 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_online_store_tutorial/product_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final productsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
-  await Future.delayed(const Duration(seconds: 2));
-  return [
-    {
-      'name': 'Apple iPhone 14 Pro',
-      'storage': '512GB',
-      'color': 'Gold',
-      'model': 'MQ2...',
-      'price': 1437,
-      'image': 'images/iphone14pro_gold.png',
-    },
-    {
-      'name': 'Apple iPhone 11',
-      'storage': '128GB',
-      'color': 'White',
-      'model': 'MQ...',
-      'price': 510,
-      'image': 'images/iphone11.png',
-    },
-    {
-      'name': 'Apple iPhone 11_white',
-      'storage': '128GB',
-      'color': 'White',
-      'model': '...',
-      'price': 550,
-      'image': 'images/iphone11_white.png',
-    },
-    {
-      'name': 'Apple iPhone 14 Pro',
-      'storage': '1TB',
-      'color': 'Gold',
-      'model': 'MQ2V3',
-      'price': 1499,
-      'image': 'images/iphone14pro.png',
-    },
-  ];
-});
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -60,7 +23,8 @@ class ProductScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final productsAsyncValue = ref.watch(productsProvider);
+    final productsAsyncValue = ref.watch(asyncProductProvider);
+    final notifier = ref.read(asyncProductProvider.notifier);
 
     return Scaffold(
       drawer: Drawer(
@@ -117,9 +81,7 @@ class ProductScreen extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton.icon(
-                        onPressed: () {
-                          // フィルターボタンのアクション
-                        },
+                        onPressed: notifier.append,
                         icon: const Icon(Icons.filter_list),
                         label: const Text('Filters'),
                         style: ElevatedButton.styleFrom(
