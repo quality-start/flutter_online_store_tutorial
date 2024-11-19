@@ -47,14 +47,14 @@ class AsyncProduct extends _$AsyncProduct {
   Future<void> append() async {
     // Notifierを使った場合、`state`という変数しか再代入できないようになっています。
     // requireValueは、AsyncValueの中身を取得するための変数。初期化されていない場合などはエラー
+    state = const AsyncLoading();
     final current = state.requireValue;
     final next = await fetchProducts();
     // currentとnextを結合すると、要素が全部連結された配列を返します。
     // [1,2,3,4] + [1,2,3,4] = [1,2,3,4,1,2,3,4]
     final result = current + next;
     // stateには、AsyncValueという型が入っています。AsyncValueは、AsyncLoading, AsyncData, AsyncErrorの3つの状態を持ちます。
-    state = const AsyncLoading();
-    state = AsyncValue.data(result); // AsyncData(result)
+    state = AsyncData(result);
   }
 }
 
