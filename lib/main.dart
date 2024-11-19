@@ -1,169 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      home: Scaffold(
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: const <Widget>[
-              DrawerHeader(
-                decoration: BoxDecoration(color: Colors.blue),
-                child: Text('Menu', style: TextStyle(color: Colors.white, fontSize: 24)),
-              ),
-              ListTile(
-                title: Text('Home'),
-              ),
-              ListTile(
-                title: Text('About'),
-              ),
-              ListTile(
-                title: Text('Contact Us'),
-              ),
-              ListTile(
-                title: Text('Blog'),
-              ),
-            ],
-          ),
-        ),
-        body: SafeArea(
-          child: FutureBuilder(
-            future: fetchProducts(),
-            builder: (context, snapshot) {
-              // 成功した場合
-              if (snapshot.hasData) {
-                return CustomScrollView(
-                  slivers: [
-                    SliverAppBar(
-                      backgroundColor: Colors.white54,
-                      title: Image.asset('images/cyber.png'),
-                      centerTitle: true,
-                      pinned: true,
-                      actions: [
-                        IconButton(
-                          icon: const Icon(Icons.favorite),
-                          onPressed: () {},
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.shopping_cart),
-                          onPressed: () {},
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.person),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                // フィルターボタンのアクション
-                              },
-                              icon: const Icon(Icons.filter_list),
-                              label: const Text('Filters'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                elevation: 1,
-                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                              ),
-                            ),
-                            DropdownButton<String>(
-                              onChanged: (value) {
-                                // ドロップダウンのアクション
-                              },
-                              icon: const Icon(Icons.arrow_drop_down),
-                              hint: const Text('By rating'),
-                              items: <String>['High to Low', 'Low to High']
-                                  .map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Products Result : ',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              '85',
-                              style: TextStyle(fontSize: 16, color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SliverPadding(
-                      padding: const EdgeInsets.all(16),
-                      sliver: SliverGrid(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.45,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            return ProductCard(product: snapshot.data![index]);
-                          },
-                          childCount: snapshot.data!.length,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }
-              // なんかエラーでた
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text('無理: ${snapshot.error}'),
-                );
-              }
-              return const Center(child: CircularProgressIndicator());
-              // 読込中
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/*
-final products = ref.watch(productsProvider);
-
-return products.when({
-  success: (data) => data,
-  error: (error, stacktrace) => Text("error"),
-  loading: () => CircularProgressIndicator()
-})*/
-
-Future<List<Map<String, dynamic>>> fetchProducts() async {
-  final products = <Map<String, dynamic>>[
+final productsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  await Future.delayed(const Duration(seconds: 2));
+  return [
     {
       'name': 'Apple iPhone 14 Pro',
       'storage': '512GB',
@@ -197,9 +37,158 @@ Future<List<Map<String, dynamic>>> fetchProducts() async {
       'image': 'images/iphone14pro.png',
     },
   ];
-  return Future.delayed(const Duration(seconds: 2), () {
-    return products;
-  });
+});
+
+void main() {
+  runApp(const ProviderScope(child: MyApp()));
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      title: 'Flutter Demo',
+      home: ProductScreen(),
+    );
+  }
+}
+
+class ProductScreen extends ConsumerWidget {
+  const ProductScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final productsAsyncValue = ref.watch(productsProvider);
+
+    return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: const <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text('Menu', style: TextStyle(color: Colors.white, fontSize: 24)),
+            ),
+            ListTile(
+              title: Text('Home'),
+            ),
+            ListTile(
+              title: Text('About'),
+            ),
+            ListTile(
+              title: Text('Contact Us'),
+            ),
+            ListTile(
+              title: Text('Blog'),
+            ),
+          ],
+        ),
+      ),
+      body: SafeArea(
+        child: productsAsyncValue.when(
+          data: (products) => CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                backgroundColor: Colors.white54,
+                title: Image.asset('images/cyber.png'),
+                centerTitle: true,
+                pinned: true,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.favorite),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.shopping_cart),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.person),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          // フィルターボタンのアクション
+                        },
+                        icon: const Icon(Icons.filter_list),
+                        label: const Text('Filters'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          elevation: 1,
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        ),
+                      ),
+                      DropdownButton<String>(
+                        onChanged: (value) {
+                          // ドロップダウンのアクション
+                        },
+                        icon: const Icon(Icons.arrow_drop_down),
+                        hint: const Text('By rating'),
+                        items: <String>['High to Low', 'Low to High']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      const Text(
+                        'Products Result : ',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '${products.length}',
+                        style: const TextStyle(fontSize: 16, color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.45,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return ProductCard(product: products[index]);
+                    },
+                    childCount: products.length,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(child: Text('Error: $error')),
+        ),
+      ),
+    );
+  }
 }
 
 class ProductCard extends StatelessWidget {
