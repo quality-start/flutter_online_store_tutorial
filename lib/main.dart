@@ -25,6 +25,18 @@ class ProductScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final productsAsyncValue = ref.watch(asyncProductProvider);
     final notifier = ref.read(asyncProductProvider.notifier);
+    final controller = ScrollController();
+
+    // リスナーを追加
+    controller.addListener(() {
+      if (controller.position.atEdge) {
+        final isBottom = controller.position.pixels == controller.position.maxScrollExtent;
+        if (isBottom) {
+          // 最後までスクロールされたときの処理
+          notifier.append();
+        }
+      }
+    });
 
     return Scaffold(
       drawer: Drawer(
@@ -53,6 +65,7 @@ class ProductScreen extends ConsumerWidget {
       body: SafeArea(
         child: productsAsyncValue.when(
           data: (products) => CustomScrollView(
+            controller: controller,
             slivers: [
               SliverAppBar(
                 backgroundColor: Colors.white54,
