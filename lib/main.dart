@@ -27,12 +27,10 @@ class ProductScreen extends ConsumerWidget {
     final notifier = ref.read(asyncProductProvider.notifier);
     final controller = ScrollController();
 
-    // リスナーを追加
     controller.addListener(() {
       if (controller.position.atEdge) {
         final isBottom = controller.position.pixels == controller.position.maxScrollExtent;
         if (isBottom) {
-          // 最後までスクロールされたときの処理
           notifier.append();
         }
       }
