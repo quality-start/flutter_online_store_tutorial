@@ -59,40 +59,16 @@ class AsyncProduct extends _$AsyncProduct {
 }
 
 Future<List<Map<String, dynamic>>> fetchProducts() async {
-  return Future.delayed(const Duration(seconds: 1), () {
-    return [
-      {
-        'name': 'Apple iPhone 14 Pro',
-        'storage': '512GB',
-        'color': 'Gold',
-        'model': 'MQ2...',
-        'price': 1437,
-        'image': 'images/iphone14pro_gold.png',
-      },
-      {
-        'name': 'Apple iPhone 11',
-        'storage': '128GB',
-        'color': 'White',
-        'model': 'MQ...',
-        'price': 510,
-        'image': 'images/iphone11.png',
-      },
-      {
-        'name': 'Apple iPhone 11_white',
-        'storage': '128GB',
-        'color': 'White',
-        'model': '...',
-        'price': 550,
-        'image': 'images/iphone11_white.png',
-      },
-      {
-        'name': 'Apple iPhone 14 Pro',
-        'storage': '1TB',
-        'color': 'Gold',
-        'model': 'MQ2V3',
-        'price': 1499,
-        'image': 'images/iphone14pro.png',
-      },
-    ];
-  });
+  final response = await http.get(
+    Uri.parse(
+      'https://script.google.com/macros/s/AKfycbxhvuNcXRPIdS74WdGdf3J_A7D56bOMLbO----HuNZRf-gRbMlohKM3JV2iehafOa-s/exec',
+    ),
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception('Failed to fetch products');
+  }
+
+  final data = jsonDecode(response.body) as List<dynamic>;
+  return data.cast<Map<String, dynamic>>();
 }
