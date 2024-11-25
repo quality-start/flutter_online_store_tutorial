@@ -28,11 +28,9 @@ class ProductScreen extends ConsumerWidget {
     final controller = ScrollController();
 
     controller.addListener(() {
-      if (controller.position.atEdge) {
-        final isBottom = controller.position.pixels == controller.position.maxScrollExtent;
-        if (isBottom) {
-          notifier.append();
-        }
+      final scrollPercentage = controller.position.pixels / controller.position.maxScrollExtent;
+      if (scrollPercentage >= 0.8) {
+        notifier.append();
       }
     });
 
