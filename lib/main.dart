@@ -75,7 +75,14 @@ class ProductScreen extends ConsumerWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.shopping_cart),
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) => const AlertDialog(
+                          title: Text('カート情報'),
+                        ),
+                      );
+                    },
                   ),
                   IconButton(
                     icon: const Icon(Icons.person),
