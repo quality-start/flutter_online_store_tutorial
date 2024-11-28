@@ -82,6 +82,15 @@ class ProductScreen extends ConsumerWidget {
                     onPressed: () {},
                   ),
                 ],
+                flexibleSpace: InkWell(
+                  onTap: () {
+                    controller.animateTo(
+                      0, // 移動したい位置を指定
+                      duration: const Duration(milliseconds: 1), //ここ10秒にしても変わった実感ない
+                      curve: Curves.linear,
+                    );
+                  },
+                ),
               ),
               SliverToBoxAdapter(
                 child: Padding(
