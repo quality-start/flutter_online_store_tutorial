@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -56,12 +57,39 @@ class AsyncProduct extends _$AsyncProduct {
     state = const AsyncLoading();
     state = AsyncValue.data(result); // AsyncData(result)
   }
+
+  Future<List<Map<String, dynamic>>> serch() async {
+    // appliedFiltersProviderとappliedPriceRangeProviderの値を取得
+    final appliedFilters = ref.watch(appliedFiltersProvider);
+    final appliedPriceRange = ref.watch(appliedPriceRangeProvider);
+
+    // ストレージフィルタのクエリパラメータを生成
+    final storageFilters = appliedFilters.isNotEmpty ? 'storage=${appliedFilters.join(',')}' : '';
+
+    // 価格フィルタのクエリパラメータを生成
+    final priceFilters =
+        'priceMin=${appliedPriceRange.start.toInt()}&priceMax=${appliedPriceRange.end.toInt()}';
+
+    // 完成したURL
+    final url =
+        'https://script.google.com/macros/s/AKfycbwgx1vHi2xDkNXQXExjxYbT9THXGkmQTMKaA4ES01_fdDCWpTJFCfkmb_IvzC6dwmI/exec?$storageFilters&$priceFilters';
+
+    // データを取得
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to fetch products');
+    }
+
+    final data = jsonDecode(response.body) as List<dynamic>;
+    return data.cast<Map<String, dynamic>>();
+  }
 }
 
 Future<List<Map<String, dynamic>>> fetchProducts() async {
   final response = await http.get(
     Uri.parse(
-      'https://script.google.com/macros/s/AKfycbxhvuNcXRPIdS74WdGdf3J_A7D56bOMLbO----HuNZRf-gRbMlohKM3JV2iehafOa-s/exec',
+      'https://script.google.com/macros/s/AKfycbwgx1vHi2xDkNXQXExjxYbT9THXGkmQTMKaA4ES01_fdDCWpTJFCfkmb_IvzC6dwmI/exec',
     ),
   );
 
@@ -72,3 +100,38 @@ Future<List<Map<String, dynamic>>> fetchProducts() async {
   final data = jsonDecode(response.body) as List<dynamic>;
   return data.cast<Map<String, dynamic>>();
 }
+
+// チェックボックスの状態を保持するStateNotifier
+class FiltersNotifier extends StateNotifier<Map<String, bool>> {
+  FiltersNotifier()
+      : super({
+          '16GB': false,
+          '32GB': false,
+          '64GB': false,
+          '128GB': false,
+          '256GB': false,
+          '512GB': false,
+        });
+
+  // チェックボックスの状態をトグルするメソッド
+  void toggle(String key) {
+    state = {
+      ...state,
+      key: !(state[key] ?? false),
+    };
+  }
+}
+
+// フィルタープロバイダー
+final filtersProvider = StateNotifierProvider<FiltersNotifier, Map<String, bool>>(
+  (ref) => FiltersNotifier(),
+);
+
+// 価格スライダーのプロバイダー
+final priceRangeProvider = StateProvider<RangeValues>((ref) => const RangeValues(0, 5000));
+
+// 適用されたフィルターの状態を保持するStateProvider
+final appliedFiltersProvider = StateProvider<List<String>>((ref) => []);
+final appliedPriceRangeProvider = StateProvider<RangeValues>(
+  (ref) => const RangeValues(0, 5000),
+);

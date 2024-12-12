@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_online_store_tutorial/filter_screen.dart';
 import 'package:flutter_online_store_tutorial/product_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,13 +25,15 @@ class ProductScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final productsAsyncValue = ref.watch(asyncProductProvider);
+    final appliedFilters = ref.watch(appliedFiltersProvider);
+    final appliedPriceRange = ref.watch(appliedPriceRangeProvider);
     final notifier = ref.read(asyncProductProvider.notifier);
     final controller = ScrollController();
 
     controller.addListener(() {
       final scrollPercentage = controller.position.pixels / controller.position.maxScrollExtent;
       if (scrollPercentage >= 0.8) {
-        notifier.append();
+        notifier.serch();
       }
     });
 
@@ -106,7 +109,12 @@ class ProductScreen extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton.icon(
-                        onPressed: notifier.append,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const FilterScreen()),
+                          );
+                        },
                         icon: const Icon(Icons.filter_list),
                         label: const Text('Filters'),
                         style: ElevatedButton.styleFrom(
