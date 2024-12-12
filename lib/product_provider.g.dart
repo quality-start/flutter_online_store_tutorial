@@ -23,7 +23,7 @@ final dummyProductProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DummyProductRef = AutoDisposeFutureProviderRef<Map<String, dynamic>>;
-String _$asyncProductHash() => r'21a7905ba6b034254dda474fefd7cff213e167fd';
+String _$asyncProductHash() => r'1af31786ea0305d49b60aeb382169290ce442a24';
 
 /// See also [AsyncProduct].
 @ProviderFor(AsyncProduct)
@@ -38,5 +38,21 @@ final asyncProductProvider = AutoDisposeAsyncNotifierProvider<AsyncProduct,
 );
 
 typedef _$AsyncProduct = AutoDisposeAsyncNotifier<List<Map<String, dynamic>>>;
+String _$searchConditionHash() => r'b4f78eb753a8ae2180d3b8baa9be02884387b482';
+
+/// See also [SearchCondition].
+@ProviderFor(SearchCondition)
+final searchConditionProvider =
+    NotifierProvider<SearchCondition, ProductFilter>.internal(
+  SearchCondition.new,
+  name: r'searchConditionProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$searchConditionHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$SearchCondition = Notifier<ProductFilter>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_online_store_tutorial/product_filter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -83,6 +84,26 @@ class AsyncProduct extends _$AsyncProduct {
 
     final data = jsonDecode(response.body) as List<dynamic>;
     return data.cast<Map<String, dynamic>>();
+  }
+}
+
+@Riverpod(keepAlive: true)
+class SearchCondition extends _$SearchCondition {
+  @override
+  ProductFilter build() => const ProductFilter();
+
+  void setMemories({required String memory, required bool selected}) {
+    selected
+        ? state = state.copyWith(memories: [...state.memories ?? [], memory])
+        : state = state.copyWith(memories: state.memories?.where((e) => e != memory).toList());
+  }
+
+  void setMinPrice(int minPrice) {
+    state = state.copyWith(minPrice: minPrice);
+  }
+
+  void setMaxPrice(int maxPrice) {
+    state = state.copyWith(minPrice: maxPrice);
   }
 }
 
